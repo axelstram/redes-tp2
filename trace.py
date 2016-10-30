@@ -40,24 +40,19 @@ class Hop:
 
 
 
-def HuboRespuesta(hop):
-	if hop.ip not 0:
-		return true
-	else
-		return false
-
-
 def CalcularRuta(host, ttl):
 	ruta = []
 
 	for ttl in range(1, 50):
 		hop = Hop()
+		huboRespuesta = false
 
 		for rafaga in range(1, 3):
 			packet = IP(dst=host, ttl=ttl) / ICMP()
 			ans, unans = sr(packet, timeout=10)
 
-			if len(ans) != 0: #hubo respuesta
+			if len(ans) != 0:
+				huboRespuesta = true
 				packet_sent = ans[0][0]
 				answer = ans[0][1]
 
@@ -73,7 +68,7 @@ def CalcularRuta(host, ttl):
 					hop.rttlist.append(rtt)
 		#end for
 
-		if HuboRespuesta(hop):
+		if huboRespuesta:
 			hop.rttprom = sum(hop.rttlist)/len(hop.rttlist)
 			#.... aca hay que meterle al hop toda la gilada de geolocalizacion. Por ahi habria que llamar a esas paginas de geolocalizacion
 			#desde el codigo y parsear lo que devuelven, para que quede todo automatico.
