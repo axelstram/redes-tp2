@@ -50,23 +50,27 @@ class Hop:
 
 def Geolocalizar(ip):
 	print ip
-	dicc = json.loads(urllib2.urlopen("http://ip-api.com/json/" + ip).read())
-	if "country" not in dicc.keys():
-		dicc = json.loads(urllib2.urlopen("http://ip-api.com/json/").read()) #para que me devuelva la ubicacion mia.
-	print dicc["country"]
-	return [dicc["country"], dicc["city"], dicc["lat"], dicc["lon"]]
+	dicc = json.loads(urllib2.urlopen("http://freegeoip.net/json/" + str(ip)).read())
+	if "country_name" not in dicc.keys():
+		dicc = json.loads(urllib2.urlopen("http://freegeoip.net/json/").read()) #para que me devuelva la ubicacion mia.
+	print dicc["country_name"]
+	return [dicc["country_name"], dicc["city"], dicc["latitude"], dicc["longitude"]]
+
+	#{u'city': u'Nunez', u'region_code': u'C', u'region_name': u'Buenos Aires F.D.', u'ip': u'181.167.161.118', 
+	#u'time_zone': u'America/Argentina/Buenos_Aires', u'longitude': -58.4504, u'metro_code': 0, u'latitude': -34.5487, 
+	#u'country_code': u'AR', u'country_name': u'Argentina', u'zip_code': u''}
 
 
 def CalcularRuta(host):
 	ruta = []
 
-	for ttl in range(10, 50):
+	for ttl in range(10, 30):
 		hop = Hop()
 		huboRespuesta = False
 
 		for rafaga in range(1, 2):
 			packet = IP(dst=host, ttl=ttl) / ICMP()
-			ans, unans = sr(packet, timeout=20)
+			ans, unans = sr(packet, timeout=2)
 
 			if len(ans) != 0:
 				huboRespuesta = True
@@ -86,6 +90,11 @@ def CalcularRuta(host):
 		#end for
 
 		if huboRespuesta:
+			if len(ruta) != 0:
+				if hop.ip == ruta[-1].ip:
+					print "Termino!!!"
+					break
+
 			hop.rttprom = sum(hop.rttlist)/len(hop.rttlist)
 			pais_ciudad_latitud_longitud = Geolocalizar(hop.ip)
 			hop.pais = pais_ciudad_latitud_longitud[0]
@@ -94,10 +103,8 @@ def CalcularRuta(host):
 			hop.longitud = pais_ciudad_latitud_longitud[3]
 
 			ruta.append(hop)
-
-			if hop.ip == host:
-				break
-
+			
+			
 	#end for
 	return ruta
 
@@ -106,4 +113,5 @@ def CalcularRuta(host):
 
 
 if __name__ == '__main__':
-	ruta = CalcularRuta("www.google.com")
+	ruta = CalcularRuta("www.u-tokyo.ac.jp")
+	print len(ruta)
