@@ -3,6 +3,7 @@ import sys
 import math
 import urllib2
 import json
+import socket
 
 
 class PacketType():
@@ -49,11 +50,12 @@ class Hop:
 
 
 def Geolocalizar(ip):
-	print ip
 	dicc = json.loads(urllib2.urlopen("http://freegeoip.net/json/" + str(ip)).read())
 	if "country_name" not in dicc.keys():
 		dicc = json.loads(urllib2.urlopen("http://freegeoip.net/json/").read()) #para que me devuelva la ubicacion mia.
-	print dicc["country_name"]
+
+	print "\n" + ip + ", " + dicc["country_name"] + "\n"
+
 	return [dicc["country_name"], dicc["city"], dicc["latitude"], dicc["longitude"]]
 
 	#{u'city': u'Nunez', u'region_code': u'C', u'region_name': u'Buenos Aires F.D.', u'ip': u'181.167.161.118', 
@@ -63,8 +65,9 @@ def Geolocalizar(ip):
 
 def CalcularRuta(host):
 	ruta = []
+	hostIP = socket.gethostbyname(host)
 
-	for ttl in range(10, 30):
+	for ttl in range(1, 30):
 		hop = Hop()
 		huboRespuesta = False
 
@@ -90,11 +93,6 @@ def CalcularRuta(host):
 		#end for
 
 		if huboRespuesta:
-			if len(ruta) != 0:
-				if hop.ip == ruta[-1].ip:
-					print "Termino!!!"
-					break
-
 			hop.rttprom = sum(hop.rttlist)/len(hop.rttlist)
 			pais_ciudad_latitud_longitud = Geolocalizar(hop.ip)
 			hop.pais = pais_ciudad_latitud_longitud[0]
@@ -103,6 +101,10 @@ def CalcularRuta(host):
 			hop.longitud = pais_ciudad_latitud_longitud[3]
 
 			ruta.append(hop)
+
+			if hop.ip == hostIP:
+				print "Llego!!!"
+				break
 			
 			
 	#end for
@@ -113,5 +115,4 @@ def CalcularRuta(host):
 
 
 if __name__ == '__main__':
-	ruta = CalcularRuta("www.u-tokyo.ac.jp")
-	print len(ruta)
+	ruta = CalcularRuta("www.msu.ru")
