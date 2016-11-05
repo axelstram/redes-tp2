@@ -1,10 +1,11 @@
 from scapy.all import *
-from enum import Enum
 import sys
 import math
+import urllib2
+import json
 
 
-class PacketType(Enum):
+class PacketType():
 	EchoReply = 0
 	DestUnreachable = 3
 	SourceQuench = 4
@@ -30,6 +31,10 @@ class Hop:
 		self.ttl = 0
 		self.rttprom = 0
 		self.rttlist = []
+		self.pais = ""
+		self.ciudad = ""
+		self.latitud = 0.0
+		self.longitud = 0.0
 		
 
 	def Show(self):
@@ -37,22 +42,34 @@ class Hop:
 		print "ttl: " + str(self.ttl)
 		print "rttprom: " + str(self.rttprom)
 		print "rtt list: " + str(self.rttlist)
+		print "pais: " + str(self.pais)
+		print "ciudad: " + str(self.ciudad)
+		print "latitud: " + str(self.latitud)
+		print "longitud: " + str(self.longitud)
 
 
+def Geolocalizar(ip):
+	print ip
+	dicc = json.loads(urllib2.urlopen("http://ip-api.com/json/" + ip).read())
+	if "country" not in dicc.keys():
+		dicc = json.loads(urllib2.urlopen("http://ip-api.com/json/").read()) #para que me devuelva la ubicacion mia.
+	print dicc["country"]
+	return [dicc["country"], dicc["city"], dicc["lat"], dicc["lon"]]
 
-def CalcularRuta(host, ttl):
+
+def CalcularRuta(host):
 	ruta = []
 
-	for ttl in range(1, 50):
+	for ttl in range(10, 50):
 		hop = Hop()
-		huboRespuesta = false
+		huboRespuesta = False
 
-		for rafaga in range(1, 3):
+		for rafaga in range(1, 2):
 			packet = IP(dst=host, ttl=ttl) / ICMP()
-			ans, unans = sr(packet, timeout=10)
+			ans, unans = sr(packet, timeout=20)
 
 			if len(ans) != 0:
-				huboRespuesta = true
+				huboRespuesta = True
 				packet_sent = ans[0][0]
 				answer = ans[0][1]
 
@@ -64,15 +81,18 @@ def CalcularRuta(host, ttl):
 
 				if (answer.type == PacketType.TimeExceeded): #No llegue. Saco los datos host que me devolvio este paquete ICMP
 					rtt = (answer.time - packet_sent.sent_time)
-					hop.ip = answer.src 	#SERIOUS SHIT: PREGUNTAR QUE PASA SI TENGO VARIAS RUTAS DISTINTAS. ¿CON CUAL ME QUEDO?
+					hop.ip = answer.src
 					hop.rttlist.append(rtt)
 		#end for
 
 		if huboRespuesta:
 			hop.rttprom = sum(hop.rttlist)/len(hop.rttlist)
-			#.... aca hay que meterle al hop toda la gilada de geolocalizacion. Por ahi habria que llamar a esas paginas de geolocalizacion
-			#desde el codigo y parsear lo que devuelven, para que quede todo automatico.
-			#despues le agregamos esos campos a la clase hop y lo guardamos ahi.
+			pais_ciudad_latitud_longitud = Geolocalizar(hop.ip)
+			hop.pais = pais_ciudad_latitud_longitud[0]
+			hop.ciudad = pais_ciudad_latitud_longitud[1]
+			hop.latitud = pais_ciudad_latitud_longitud[2]
+			hop.longitud = pais_ciudad_latitud_longitud[3]
+
 			ruta.append(hop)
 
 			if hop.ip == host:
@@ -86,3 +106,4 @@ def CalcularRuta(host, ttl):
 
 
 if __name__ == '__main__':
+	ruta = CalcularRuta("www.google.com")
