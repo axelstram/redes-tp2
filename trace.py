@@ -4,6 +4,7 @@ import math
 import urllib2
 import json
 import socket
+import io
 
 
 class PacketType():
@@ -150,12 +151,28 @@ def calcularZRTT(deltaRTT, rttProm, std):
 	return abs((deltaRTT-rttProm))/std
 
 
+def mostrarRTTRelativos(host, ruta):
+	nombreArchivo = "rtt_relativos_" + str(host) + ".txt"
+	print nombreArchivo
+	with io.FileIO(nombreArchivo, "w") as file:
+		for hop in ruta:
+			line = str(hop.ip) + " " + str(hop.deltaRTT)
+			file.write(line)
+
+
+
 if __name__ == '__main__':
-	ruta = calcularRuta("www.msu.ru")
+	if sys.argv[1] == "":
+		print "No se ingreso ningun host"
+		exit(1)
+
+	host = sys.argv[1]
+	ruta = calcularRuta(host)
 	deltaRTTProm, rttlist = calcularDeltaRTTProm(ruta)
 	std = calcularSTD(deltaRTTProm, rttlist)
 
 	for hop in ruta:
 		hop.zrtt = calcularZRTT(hop.deltaRTT, deltaRTTProm, std)
-		print hop.zrtt
-
+		
+	if sys.argv[2] == "1":
+		mostrarRTTRelativos(host, ruta)
