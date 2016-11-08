@@ -153,10 +153,12 @@ def calcularZRTT(deltaRTT, rttProm, std):
 
 def mostrarRTTRelativos(host, ruta):
 	nombreArchivo = "rtt_relativos_" + str(host) + ".txt"
-	print nombreArchivo
+	nroHop = 1
+
 	with io.FileIO(nombreArchivo, "w") as file:
 		for hop in ruta:
-			line = str(hop.ip) + " " + str(hop.deltaRTT)
+			line = str(nroHop) + " " + str(hop.deltaRTT) + "\n"
+			nroHop += 1
 			file.write(line)
 
 
