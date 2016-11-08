@@ -59,8 +59,12 @@ class Hop:
 
 def geolocalizar(ip):
 	dicc = json.loads(urllib2.urlopen("http://freegeoip.net/json/" + str(ip)).read())
-	if "country_name" not in dicc.keys():
-		dicc = json.loads(urllib2.urlopen("http://freegeoip.net/json/").read()) #para que me devuelva la ubicacion mia.
+
+	if dicc["country_name"] == "":
+		dicc["country_name"] = "Argentina"
+		dicc["city"] = "Buenos Aires"
+		dicc["latitude"] = -34.6006
+		dicc["longitude"] = -58.4887 
 
 	print "\n" + ip + ", " + dicc["country_name"] + "\n"
 
