@@ -1,10 +1,12 @@
 from scapy.all import *
+from scipy.stats import t
 import sys
 import math
 import urllib2
 import json
 import socket
 import io
+import numpy
 
 
 class PacketType():
@@ -115,9 +117,12 @@ def calcularRuta(host):
 			if len(ruta) == 0:
 				hop.deltaRTT = hop.rttprom
 			else:
-				hop.deltaRTT = abs(hop.rttprom - ruta[-1].rttprom)
+				hop.deltaRTT = hop.rttprom - ruta[-1].rttprom
 
-			hop.std = calcularSTD(hop.rttprom, hop.rttlist)
+			if hop.deltaRTT < 0:
+				hop.deltaRTT = 0
+
+			hop.std = numpy.std(hop.rttlist)
 
 			ruta.append(hop)
 
@@ -131,28 +136,14 @@ def calcularRuta(host):
 
 
 
+def calcularZRTTParaCadaHop(ruta):
+	deltaRTTList = [hop.deltaRTT for hop in ruta]
+	deltaRTTProm = numpy.average(deltaRTTList)
+	std = numpy.std(deltaRTTList)
 
-def calcularDeltaRTTProm(ruta):
-	rttlist = []
+	for hop in ruta:
+		hop.zrtt = (hop.deltaRTT-deltaRTTProm)/std
 
- 	for hop in ruta:
- 		rttlist.append(hop.rttprom)
-
- 	deltaRTTProm = (sum(rttlist)/len(rttlist))
-
- 	return deltaRTTProm, rttlist
-
-
-
-
-def calcularSTD(rttprom, rttlist):
-	suma = sum([(i - rttprom)**2 for i in rttlist])
-	return math.sqrt(suma/len(rttlist))
-
-
-
-def calcularZRTT(deltaRTT, rttProm, std):
-	return abs((deltaRTT-rttProm))/std
 
 
 def mostrarRTTRelativos(host, ruta):
@@ -167,6 +158,43 @@ def mostrarRTTRelativos(host, ruta):
 
 
 
+def modifiedThompsonTau(n):
+	alpha = 0.05
+	tStudent = t.ppf((1-alpha)/n, n-2, 0, 1)
+	denominador = math.sqrt(n)*(math.sqrt(n-2+(tStudent**2)))
+	return tStudent/denominador
+
+
+
+def hayOutliers(deltaHopActual, tau, std):
+	if deltaHopActual > tau*std:
+		return True
+	else:
+		return False
+
+
+
+def calcularOutliers(ruta):
+	outliers = []
+
+	for hop in ruta:
+		deltaRTTList = [hop.deltaRTT for hop in ruta]
+		deltaRTTProm = numpy.average(deltaRTTList)
+		std = numpy.std(deltaRTTList)
+		tau = modifiedThompsonTau(len(ruta))
+		deltaHopActual = abs(hop.deltaRTT - deltaRTTProm)
+
+		if hayOutliers(deltaHopActual, tau, std):
+			ruta = [otrosHops for otrosHops in ruta if otrosHops != hop]
+			outliers.append(hop)
+			print "Hop " + str(hop.ip) + " es un outlier"
+		else:
+			#no hay outliers.
+			break
+			
+	return outliers
+
+
 if __name__ == '__main__':
 	if sys.argv[1] == "":
 		print "No se ingreso ningun host"
@@ -174,11 +202,10 @@ if __name__ == '__main__':
 
 	host = sys.argv[1]
 	ruta = calcularRuta(host)
-	deltaRTTProm, rttlist = calcularDeltaRTTProm(ruta)
-	std = calcularSTD(deltaRTTProm, rttlist)
+	calcularZRTTParaCadaHop(ruta) 
 
-	for hop in ruta:
-		hop.zrtt = calcularZRTT(hop.deltaRTT, deltaRTTProm, std)
-		
+	#outliers = calcularOutliers(ruta)
+	#print outliers
+
 	if sys.argv[2] == "1":
 		mostrarRTTRelativos(host, ruta)
