@@ -160,9 +160,9 @@ def mostrarRTTRelativos(host, ruta):
 
 def modifiedThompsonTau(n):
 	alpha = 0.05
-	tStudent = t.ppf((1-alpha)/n, n-2, 0, 1)
-	denominador = math.sqrt(n)*(math.sqrt(n-2+(tStudent**2)))
-	return tStudent/denominador
+	tStudent = t.pdf(alpha/2, df=n-2)
+	print "t student: " + str(tStudent) + " n-2: " + str(n-2)
+	return (tStudent*(n-1)) / (math.sqrt(n)*(math.sqrt(n-2+(tStudent**2))))
 
 
 
@@ -178,11 +178,16 @@ def calcularOutliers(ruta):
 	outliers = []
 
 	for hop in ruta:
+		if len(ruta) <= 2:
+			break
+
 		deltaRTTList = [hop.deltaRTT for hop in ruta]
 		deltaRTTProm = numpy.average(deltaRTTList)
 		std = numpy.std(deltaRTTList)
 		tau = modifiedThompsonTau(len(ruta))
 		deltaHopActual = abs(hop.deltaRTT - deltaRTTProm)
+
+		print "deltaHopActual: " + str(deltaHopActual) + " tau: " + str(tau) + " std: " + str(std)
 
 		if hayOutliers(deltaHopActual, tau, std):
 			ruta = [otrosHops for otrosHops in ruta if otrosHops != hop]
@@ -204,8 +209,7 @@ if __name__ == '__main__':
 	ruta = calcularRuta(host)
 	calcularZRTTParaCadaHop(ruta) 
 
-	#outliers = calcularOutliers(ruta)
-	#print outliers
+	outliers = calcularOutliers(ruta)
 
 	if sys.argv[2] == "1":
 		mostrarRTTRelativos(host, ruta)
