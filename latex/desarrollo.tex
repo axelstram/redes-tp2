@@ -2,8 +2,8 @@
 
 Para implementar la herramienta utilizamos la biblioteca Scapy. Utilizamos TTLs incrementales hasta un máximo de 30, y por cada valor de TTL enviamos un paquete ICMP hacia el host destino, y chequeamos si algún host nos envía una respuesta del tipo \textit{Time Exceeded}. Si este es el caso, quiere decir que se trata de un host intermedio (hop), y lo agregamos a la ruta estimada. Si el paquete respuesta es del tipo \textit{Echo Reply}, significa que llegamos al host destino. En ambos casos calculamos el RTT (Round Trip Time) del paquete enviado. Esto se realiza varias veces por cada TTL (en lo que llamamos \textit{ráfagas}), para de esta manera poder estimar un RRT promedio para cada hop.
 
-Si obtuvimos una respuesta en una o más ráfagas, calculamos el \delta RTT, que se define como
+Si obtuvimos una respuesta en una o más ráfagas, calculamos el $\Delta RTT$, que se define como
 
-\delta RTT_{i} = RTT_{i} - RTT_{i-1} donde RTT_{i} es el RTT promediado de todas las ráfagas enviadas hacia un hop.
+$\Delta RTT_{i} = RTT_{i} - RTT_{i-1}$ donde $RTT_{i}$ es el $RTT$ promediado de todas las ráfagas enviadas hacia un hop.
 
-Adicionalmente, utilizamos una herramienta de geolocalización [3] para estimar el país, ciudad, latitud y longitud del hop, y de esta manera ser capaces de ubicarlos en un mapa.
+Adicionalmente, utilizamos un web service de geolocalización [3] para estimar el país, ciudad, latitud y longitud del hop, y de esta manera ser capaces de ubicarlos en un mapa.
