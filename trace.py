@@ -80,6 +80,8 @@ def geolocalizar(ip):
 def calcularRuta(host):
 	ruta = []
 	hostIP = socket.gethostbyname(host)
+	paquetesEnviados = 0
+	paquetesNoRespondidos = 0
 
 	for ttl in range(1, 30):
 		hop = Hop()
@@ -88,6 +90,7 @@ def calcularRuta(host):
 		for rafaga in range(1, 6):
 			packet = IP(dst=host, ttl=ttl) / ICMP()
 			ans, unans = sr(packet, timeout=2)
+			paquetesEnviados += 1
 
 			if len(ans) != 0:
 				huboRespuesta = True
@@ -104,6 +107,9 @@ def calcularRuta(host):
 					rtt = (answer.time - packet_sent.sent_time)
 					hop.ip = answer.src
 					hop.rttlist.append(rtt)
+
+			if len(unans) != 0:
+				paquetesNoRespondidos += 1
 		#end for
 
 		if huboRespuesta:
@@ -132,6 +138,8 @@ def calcularRuta(host):
 			
 			
 	#end for
+
+	print "Paquetes enviados: " + str(paquetesEnviados) + " / Paquetes no respondidos: " + str(paquetesNoRespondidos)
 	return ruta
 
 
@@ -209,7 +217,7 @@ if __name__ == '__main__':
 	ruta = calcularRuta(host)
 	calcularZRTTParaCadaHop(ruta) 
 
-	outliers = calcularOutliers(ruta)
+	#outliers = calcularOutliers(ruta)
 
 	if sys.argv[2] == "1":
 		mostrarRTTRelativos(host, ruta)
