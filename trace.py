@@ -207,6 +207,20 @@ def calcularOutliers(ruta):
 			
 	return outliers
 
+def outputFileForMap(ruta):
+	fileForGraphic = open('fileForGraphic', 'w')
+
+	coordinates = {'latitudes': [], 'longitudes': []}
+
+	for hop in ruta:
+		coordinates['latitudes'].append(hop.latitud)
+		coordinates['longitudes'].append(hop.longitud)
+
+	json.dump(coordinates, fileForGraphic)
+
+	fileForGraphic.close()
+
+#--------------------------------------------
 
 if __name__ == '__main__':
 	if sys.argv[1] == "":
@@ -214,10 +228,12 @@ if __name__ == '__main__':
 		exit(1)
 
 	host = sys.argv[1]
-	ruta = calcularRuta(host)
+	ruta = calcularRuta(host) #ruta es la lista de hops
 	calcularZRTTParaCadaHop(ruta) 
 
+	outputFileForMap(ruta)
+	
 	#outliers = calcularOutliers(ruta)
 
-	if sys.argv[2] == "1":
-		mostrarRTTRelativos(host, ruta)
+	if len(sys.argv) > 1 and sys.argv[2] == "1":
+			mostrarRTTRelativos(host, ruta)
