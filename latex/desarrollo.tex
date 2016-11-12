@@ -1,13 +1,21 @@
 \section{Desarrollo}
 
-Para implementar la herramienta utilizamos la biblioteca \textit{Scapy}. Utilizamos TTLs incrementales hasta un máximo de 30, y por cada valor de TTL enviamos un paquete ICMP hacia el host destino, y chequeamos si algún host nos envía una respuesta del tipo \textit{Time Exceeded}. Si este es el caso, quiere decir que se trata de un host intermedio (hop), y lo agregamos a la ruta estimada. Si el paquete respuesta es del tipo \textit{Echo Reply}, significa que llegamos al host destino. En ambos casos calculamos el RTT (Round Trip Time) del paquete enviado. Esto se realiza varias veces por cada TTL (en lo que llamamos \textit{ráfagas}), para de esta manera poder estimar un RRT promedio para cada hop.
+Para implementar la herramienta utilizamos la biblioteca \textit{Scapy}. Utilizamos TTLs incrementales hasta un máximo de 30, por cada valor de TTL enviamos un paquete ICMP hacia el host destino, y chequeamos si algún host nos envía una respuesta del tipo \textit{Time Exceeded}. 
+
+Si un host nos envía una respuesta del tipo \textit{Time Exceeded}, quiere decir que se trata de un host intermedio (hop), y lo agregamos a la ruta estimada.
+
+Si el paquete respuesta es del tipo \textit{Echo Reply}, significa que llegamos al host destino.
+
+En ambos casos calculamos el RTT (Round Trip Time) del paquete enviado. Esto se realiza varias veces por cada TTL (en lo que llamamos \textit{ráfagas}), para de esta manera poder estimar un RTT promedio para cada hop.\\
 
 Si obtuvimos una respuesta en una o más ráfagas, calculamos el $\Delta RTT$, que se define como
+\begin{center}
+$\Delta RTT_{i} = RTT_{i} - RTT_{i-1}$
+\end{center}
+donde $RTT_{i}$ es el $RTT$ promediado de todas las ráfagas enviadas hacia un hop, salvo para el caso de 
+$i = 1$, que se define como $\Delta RTT_{1} = RTT_{1}$.\\
 
-$\Delta RTT_{i} = RTT_{i} - RTT_{i-1}$ donde $RTT_{i}$ es el $RTT$ promediado de todas las ráfagas enviadas hacia un hop, salvo para el caso de 
-$i = 1$, en cuyo caso se define como $\Delta RTT_{1} = RTT_{1}$.
-
-Utilizamos un web service de geolocalización[3] para estimar el país, ciudad, latitud y longitud del hop, y de esta manera ser capaces de ubicarlos en un mapa. Para calcular el desvío estándar de los RTT obtenidos en cada ráfaga, utilizamos la función \textit{std} de la biblioteca \textit{numpy}.
+Utilizamos un web service de geolocalización[3] para estimar el país, ciudad, latitud y longitud del hop, con el fin de ubicarlos en un mapa. Para calcular el desvío estándar de los RTT obtenidos en cada ráfaga, utilizamos la función \textit{std} de la biblioteca \textit{numpy}.
 Finalmente calculamos el $ZRTT$ para cada hop, el cual se define como $ZRTT_{i} = \frac{\Delta RTT_{i} - \overline{\Delta RTT}}{STD}$
 
 Para detectar si hubo outliers utilizamos el método de Cimbala [1], el cual consiste en ver si se cumple la inecuación $|\Delta RTT_{i} - \overline{\Delta RTT}| > \tau * STD$, donde $\tau$ es la \textit{tau modificada de Thompson}[4]. En caso de cumplirse, el hop se considera un outlier y se lo remueve de la lista de hops para las subsiguientes iteraciones. Este proceso se repite hasta que: 1) no queden mas hops en la lista (son todos outliers), ó 2) no se encontró ningún outlier en una iteración en particular, en cuyo caso se termina de evaluar. Notar que en cada iteración del algoritmo se deben volver a calcular $\overline{\Delta RTT}$ y $STD$, ya que al haber encontrado un outlier y haberlo removido de la lista, ambos valores cambian.
