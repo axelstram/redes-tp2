@@ -113,7 +113,7 @@ def calcularRuta(host):
 		#end for
 
 		if huboRespuesta:
-			hop.rttprom = sum(hop.rttlist)/len(hop.rttlist)
+			hop.rttprom = numpy.average(hop.rttlist)
 			pais, ciudad, latitud, longitud = geolocalizar(hop.ip)
 			hop.pais = pais
 			hop.ciudad = ciudad
@@ -168,13 +168,12 @@ def mostrarRTTRelativos(host, ruta):
 
 def modifiedThompsonTau(n):
 	alpha = 0.05
-	tStudent = t.pdf(alpha/2, df=n-2)
-	print "t student: " + str(tStudent) + " n-2: " + str(n-2)
+	tStudent = t.ppf(1 - (alpha/2), df=n-2)
 	return (tStudent*(n-1)) / (math.sqrt(n)*(math.sqrt(n-2+(tStudent**2))))
 
 
 
-def hayOutliers(deltaHopActual, tau, std):
+def esUnOutlier(deltaHopActual, tau, std):
 	if deltaHopActual > tau*std:
 		return True
 	else:
@@ -182,30 +181,52 @@ def hayOutliers(deltaHopActual, tau, std):
 
 
 
+def hallarHopOutlier(ruta, delta):
+	for hop in ruta:
+		if hop.deltaRTT == delta:
+			return hop
+
+
 def calcularOutliers(ruta):
 	outliers = []
 
-	for hop in ruta:
-		if len(ruta) <= 2:
-			break
-
+	while len(ruta) > 2:
 		deltaRTTList = [hop.deltaRTT for hop in ruta]
 		deltaRTTProm = numpy.average(deltaRTTList)
 		std = numpy.std(deltaRTTList)
-		tau = modifiedThompsonTau(len(ruta))
-		deltaHopActual = abs(hop.deltaRTT - deltaRTTProm)
+		tau = modifiedThompsonTau(len(deltaRTTList))
+		hayOutliers = ""
 
-		print "deltaHopActual: " + str(deltaHopActual) + " tau: " + str(tau) + " std: " + str(std)
+		for delta in deltaRTTList:
+			deltaHopActual = abs(delta - deltaRTTProm)
 
-		if hayOutliers(deltaHopActual, tau, std):
-			ruta = [otrosHops for otrosHops in ruta if otrosHops != hop]
-			outliers.append(hop)
-			print "Hop " + str(hop.ip) + " es un outlier"
-		else:
-			#no hay outliers.
+			#print "deltaRTTProm: " + str(deltaRTTProm)
+			#print "deltaHopActual: " + str(deltaHopActual) + " tau: " + str(tau) + " std: " + str(std)
+
+			if esUnOutlier(deltaHopActual, tau, std):
+				hopOutlier = hallarHopOutlier(ruta, delta)
+				ruta = [otrosHops for otrosHops in ruta if otrosHops != hopOutlier]
+				outliers.append(hopOutlier)
+				hayOutliers = True
+
+				print "Hop " + str(hopOutlier.ip) + " es un outlier"
+				break
+
+			hayOutliers = False		
+		#end for
+		
+		if not hayOutliers:
+			if len(outliers) == 0:
+				print "no hay outliers"
+			else:
+				print "no hay MAS outliers"
+
 			break
+		
 			
 	return outliers
+
+
 
 def outputFileForMap(ruta):
 	fileForGraphic = open('fileForGraphic', 'w')
@@ -219,6 +240,8 @@ def outputFileForMap(ruta):
 	json.dump(coordinates, fileForGraphic)
 
 	fileForGraphic.close()
+
+
 
 def outputFileTable(ruta):
 	fileForTable = open('fileForTable', 'w')
@@ -240,6 +263,8 @@ def outputFileTable(ruta):
 	fileForTable.write('\\end{tabular}')
 
 
+
+
 #--------------------------------------------
 
 if __name__ == '__main__':
@@ -254,7 +279,8 @@ if __name__ == '__main__':
 	outputFileForMap(ruta)
 	outputFileTable(ruta)
 	
-	#outliers = calcularOutliers(ruta)
+	outliers = calcularOutliers(ruta)
+	print "Cantidad de hops en la ruta: " + str(len(ruta))
 
 	if len(sys.argv) > 1 and sys.argv[2] == "1":
 			mostrarRTTRelativos(host, ruta)
