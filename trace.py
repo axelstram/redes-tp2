@@ -220,6 +220,26 @@ def outputFileForMap(ruta):
 
 	fileForGraphic.close()
 
+def outputFileTable(ruta):
+	fileForTable = open('fileForTable', 'w')
+
+	fileForTable.write('\\begin{tabular}{| l | c | c | c | c |}\n')
+	fileForTable.write('\\hline\n')
+	fileForTable.write('Hop & IP &  RTT promedio (s)  & deltaRTT promedio & Ubicacion\\\\ \n')
+	fileForTable.write('\\hline\n')
+
+	i = 1
+	for hop in ruta:
+		line = str(i) + " & " + str(hop.ip) + " & " + str(hop.rttprom)  + " & " + str(hop.deltaRTT) + " & " + hop.pais
+		if hasattr(hop, 'ciudad') and hop.ciudad != "":
+			line += ", " + hop.ciudad 
+		fileForTable.write(line + '\\\\' + '\n')
+		fileForTable.write('\\hline\n')
+		i += 1
+
+	fileForTable.write('\\end{tabular}')
+
+
 #--------------------------------------------
 
 if __name__ == '__main__':
@@ -232,6 +252,7 @@ if __name__ == '__main__':
 	calcularZRTTParaCadaHop(ruta) 
 
 	outputFileForMap(ruta)
+	outputFileTable(ruta)
 	
 	#outliers = calcularOutliers(ruta)
 
