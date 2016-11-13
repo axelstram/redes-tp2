@@ -79,17 +79,17 @@ def geolocalizar(ip):
 	#u'country_code': u'AR', u'country_name': u'Argentina', u'zip_code': u''}
 
 
-def calcularRuta(host):
+def calcularRuta(host, maxttl, burstsize):
 	ruta = []
 	hostIP = socket.gethostbyname(host)
 	paquetesEnviados = 0
 	paquetesNoRespondidos = 0
 
-	for ttl in range(1, 30):
+	for ttl in range(1, maxttl):
 		hop = Hop()
 		huboRespuesta = False
 
-		for rafaga in range(1, 6):
+		for rafaga in range(1, burstsize):
 			packet = IP(dst=host, ttl=ttl) / ICMP()
 			ans, unans = sr(packet, timeout=2)
 			paquetesEnviados += 1
@@ -297,16 +297,22 @@ def outputFileTable(ruta, filename):
 if __name__ == '__main__':
 	host = raw_input("Ingrese un host o IP: ")
 
+	maxttl = raw_input("Ingrese el ttl hasta el que quiere ver: ")
+	burstsize = raw_input("Ingrese el tamaño de cada ráfaga: ")
+
 	ruta = calcularRuta(host) #ruta es la lista de hops
 	calcularZRTTParaCadaHop(ruta)
-
+	
 	#MAPA
 	makeMap = raw_input("Quiere crear el mapa? (s o n): ")
 	if 's' in makeMap:
 		mapName = raw_input("Ingrese un nombre para el mapa: ")
 		makeMapGraphic(ruta, mapName)
 
-	# outputLatitudeLongitudeFile(ruta)
+	#COORDENADAS
+	writeCoordenatesToFile = raw_input("Quiere guardar las coordenadas de los saltos en un archivo? (s o n): ")
+	if 's' in writeCoordenatesToFile:
+		outputLatitudeLongitudeFile(ruta)
 
 	#TABLA
 	makeTable = raw_input("Quiere crear el archivo para la tabla? (s o n): ")
