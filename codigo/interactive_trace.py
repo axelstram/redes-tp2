@@ -298,9 +298,10 @@ if __name__ == '__main__':
 	host = raw_input("Ingrese un host o IP: ")
 
 	maxttl = raw_input("Ingrese el ttl hasta el que quiere ver: ")
-	burstsize = raw_input("Ingrese el tamaño de cada ráfaga: ")
+	burstsize = raw_input("Ingrese el tamanio de cada rafaga: ")
 
-	ruta = calcularRuta(host) #ruta es la lista de hops
+	ruta = calcularRuta(host, int(maxttl), int(burstsize)) #ruta es la lista de hops
+
 	calcularZRTTParaCadaHop(ruta)
 	
 	#MAPA
