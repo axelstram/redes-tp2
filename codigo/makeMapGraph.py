@@ -13,7 +13,11 @@ map.drawcountries()
 map.fillcontinents(color='white',lake_color='black')
 map.drawcoastlines()
 
-coordinates = json.load(open('fileForGraphic', 'r'))
+inputFileName = "fileForGraphic"
+if len(sys.argv)>1:
+	inputFileName = sys.argv[1]
+
+coordinates = json.load(open(inputFileName, 'r'))
 
 x, y = map(coordinates['longitudes'], coordinates['latitudes'])
 
@@ -22,9 +26,9 @@ map.plot(x, y,
 	color='cyan', linewidth=4
 	)
 
-filename = "foo.pdf"
-if len(sys.argv)>1:
-	filename = sys.argv[1] + ".pdf"
+outputFileName = inputFileName + ".pdf"
+if len(sys.argv)>2:
+	outputFileName = sys.argv[2] + ".pdf"
 
-plt.savefig(filename, bbox_inches='tight')
+plt.savefig(outputFileName, bbox_inches='tight')
 # plt.show()
