@@ -1,0 +1,51 @@
+\begin{tabular}{| l | c | c | c | c |}
+\hline
+Hop & IP &  RTT promedio (s)  & deltaRTT promedio & Ubicacion\\ 
+\hline
+1 & 192.168.11.1 & 0.036195486784 & 0.036195486784 & Argentina, Buenos Aires\\
+\hline
+2 & 10.21.128.1 & 0.0287009345161 & 0 & Argentina, Buenos Aires\\
+\hline
+3 & 10.242.0.201 & 0.0208110279507 & 0 & Argentina, Buenos Aires\\
+\hline
+4 & 195.22.220.33 & 0.0370948844486 & 0.0162838564979 & Italy\\
+\hline
+5 & 195.22.220.32 & 0.0174778037601 & 0 & Italy\\
+\hline
+6 & 89.221.41.161 & 0.160081068675 & 0.142603264915 & Italy\\
+\hline
+7 & 89.221.41.161 & 0.163129276699 & 0.00304820802477 & Italy\\
+\hline
+8 & 154.54.9.17 & 0.190731287003 & 0.0276020103031 & United States\\
+\hline
+9 & 154.54.80.41 & 0.224752515554 & 0.0340212285519 & United States\\
+\hline
+10 & 154.54.24.193 & 0.195831418037 & 0 & United States\\
+\hline
+11 & 154.54.7.157 & 0.393865823746 & 0.198034405708 & United States\\
+\hline
+12 & 154.54.40.105 & 0.221145732062 & 0 & United States\\
+\hline
+13 & 154.54.30.186 & 0.423709481955 & 0.202563749892 & United States\\
+\hline
+14 & 154.54.57.154 & 0.467435015572 & 0.0437255336179 & United States\\
+\hline
+15 & 154.54.56.238 & 0.49922773242 & 0.0317927168475 & United States\\
+\hline
+16 & 149.14.80.210 & 0.425589534971 & 0 & United States\\
+\hline
+17 & 196.32.209.174 & 0.613329648972 & 0.187740114 & South Africa\\
+\hline
+18 & 155.232.6.65 & 0.620955139399 & 0.00762549042702 & South Africa, Wynberg\\
+\hline
+19 & 155.232.6.37 & 0.684588134289 & 0.0636329948902 & South Africa, Wynberg\\
+\hline
+20 & 155.232.6.33 & 0.669921023505 & 0 & South Africa, Wynberg\\
+\hline
+21 & 155.232.6.142 & 0.567005528344 & 0 & South Africa, Wynberg\\
+\hline
+22 & 155.232.6.145 & 0.656073161534 & 0.0890676331899 & South Africa, Wynberg\\
+\hline
+23 & 155.232.6.138 & 0.661426544189 & 0.00535338265555 & South Africa, Wynberg\\
+\hline
+\end{tabular}

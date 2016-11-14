@@ -309,25 +309,31 @@ if __name__ == '__main__':
 	if 's' in makeMap:
 		mapName = raw_input("Ingrese un nombre para el mapa: ")
 		makeMapGraphic(ruta, mapName)
+		print "Tarea finalizada \n"
 
 	#COORDENADAS
 	writeCoordenatesToFile = raw_input("Quiere guardar las coordenadas de los saltos en un archivo? (s o n): ")
 	if 's' in writeCoordenatesToFile:
-		outputLatitudeLongitudeFile(ruta)
+		coordanatesFilename = raw_input("Ingrese un nombre para el archivo: ")
+		outputLatitudeLongitudeFile(ruta, coordanatesFilename)
+		print "Tarea finalizada \n"
 
 	#TABLA
 	makeTable = raw_input("Quiere crear el archivo para la tabla? (s o n): ")
 	if 's' in makeTable:
 		tableName = raw_input("Ingrese un nombre para el archivo: ")
 		outputFileTable(ruta, tableName)
+		print "Tarea finalizada \n"
 	
 	#OUTLIERS
 	showOutliers = raw_input("Quiere calcular los outliers? (s o n): ")
 	if 's' in showOutliers:
 		outliers = calcularOutliers(ruta)
 		print "Cantidad de hops en la ruta: " + str(len(ruta))
+		print "Tarea finalizada \n"
 
 	#RTT RELATIVOS
 	showRTTRel = raw_input("Quiere mostrar los RTT relativos? (s o n): ")
 	if 's' in showRTTRel:
 		mostrarRTTRelativos(host, ruta)
+		print "Tarea finalizada \n"

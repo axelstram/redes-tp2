@@ -1,0 +1,37 @@
+\begin{tabular}{| l | c | c | c | c |}
+\hline
+Hop & IP &  RTT promedio (s)  & deltaRTT promedio & Ubicacion\\ 
+\hline
+1 & 192.168.11.1 & 0.00773384835985 & 0.00773384835985 & Argentina, Buenos Aires\\
+\hline
+2 & 10.21.128.1 & 0.12322970799 & 0.115495859631 & Argentina, Buenos Aires\\
+\hline
+3 & 10.242.0.201 & 0.0379023551941 & 0 & Argentina, Buenos Aires\\
+\hline
+4 & 200.63.150.242 & 0.16964647505 & 0.131744119856 & Argentina\\
+\hline
+5 & 200.63.150.241 & 0.0638248622417 & 0 & Argentina\\
+\hline
+6 & 200.51.208.62 & 0.0236063798269 & 0 & Argentina, Buenos Aires\\
+\hline
+7 & 213.140.39.118 & 0.124509599474 & 0.100903219647 & Spain\\
+\hline
+8 & 5.53.5.62 & 0.208739678065 & 0.0842300785912 & Spain\\
+\hline
+9 & 94.142.125.165 & 0.151147206624 & 0 & Spain\\
+\hline
+10 & 4.69.158.245 & 0.508760134379 & 0.357612927755 & United States\\
+\hline
+11 & 4.69.158.245 & 0.43449666765 & 0 & United States\\
+\hline
+12 & 213.242.110.114 & 0.528451919556 & 0.0939552519057 & Ireland, Boyle\\
+\hline
+13 & 80.64.96.228 & 0.536008971078 & 0.00755705152239 & Russia, Redkino\\
+\hline
+14 & 80.64.103.9 & 0.433499839571 & 0 & Russia, Saint Petersburg\\
+\hline
+15 & 185.44.12.155 & 0.452484236823 & 0.0189843972524 & Russia\\
+\hline
+16 & 185.44.15.196 & 0.337167978287 & 0 & Russia\\
+\hline
+\end{tabular}
