@@ -1,0 +1,5 @@
+\begin{tabular}{| l | c | c | c | c |}
+\hline
+Hop & IP &  RTT promedio (s)  & deltaRTT promedio & Ubicacion\\ 
+\hline
+\end{tabular}
