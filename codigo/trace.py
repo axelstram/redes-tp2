@@ -269,7 +269,7 @@ def outputFileForMap(ruta):
 
 
 def outputFileTable(ruta):
-	fileForTable = open('fileForTable', 'w')
+	fileForTable = open('fileForTable.tex', 'w')
 
 	fileForTable.write('\\begin{tabular}{| l | c | c | c | c |}\n')
 	fileForTable.write('\\hline\n')

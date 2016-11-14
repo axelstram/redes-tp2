@@ -271,7 +271,7 @@ def makeMapGraphic(ruta, filename):
 
 
 def outputFileTable(ruta, filename):
-	fileForTable = open(filename, 'w')
+	fileForTable = open(filename + ".tex", 'w')
 
 	fileForTable.write('\\begin{tabular}{| l | c | c | c | c |}\n')
 	fileForTable.write('\\hline\n')
