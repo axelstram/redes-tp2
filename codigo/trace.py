@@ -205,7 +205,6 @@ def calcularOutliers(ruta):
 		for delta in deltaRTTList:
 			deltaHopActual = abs(delta - deltaRTTProm)
 
-			#print "deltaRTTProm: " + str(deltaRTTProm)
 			#print "deltaHopActual: " + str(deltaHopActual) + " tau: " + str(tau) + " std: " + str(std)
 
 			if esUnOutlier(deltaHopActual, tau, std):
