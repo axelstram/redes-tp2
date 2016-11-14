@@ -42,21 +42,8 @@ class Hop:
 		self.latitud = 0.0
 		self.longitud = 0.0
 		self.zrtt = 0.0
+		self.esUnOutlier = False
 		
-
-	def show(self):
-		print "ip: " + str(self.ip)
-		print "ttl: " + str(self.ttl)
-		print "rttprom: " + str(self.rttprom)
-		print "rtt list: " + str(self.rttlist)
-		print "delta rtt: " + str(self.deltaRTT)
-		print "std: " + str(self.std)
-		print "pais: " + str(self.pais)
-		print "ciudad: " + str(self.ciudad)
-		print "latitud: " + str(self.latitud)
-		print "longitud: " + str(self.longitud)
-		print "zrtt: " + str(self.zrtt)
-
 
 
 def geolocalizar(ip):
@@ -87,7 +74,7 @@ def calcularRuta(host):
 		hop = Hop()
 		huboRespuesta = False
 
-		for rafaga in range(1, 6):
+		for rafaga in range(1, 10):
 			packet = IP(dst=host, ttl=ttl) / ICMP()
 			ans, unans = sr(packet, timeout=2)
 			paquetesEnviados += 1
@@ -150,11 +137,11 @@ def calcularZRTTParaCadaHop(ruta):
 	std = numpy.std(deltaRTTList)
 
 	for hop in ruta:
-		hop.zrtt = (hop.deltaRTT-deltaRTTProm)/std
+		hop.zrtt = abs(hop.deltaRTT-deltaRTTProm)/std
 
 
 
-def mostrarRTTRelativos(host, ruta):
+def guardarRTTRelativos(host, ruta):
 	nombreArchivo = "rtt_relativos_" + str(host) + ".txt"
 	nroHop = 1
 
@@ -164,6 +151,16 @@ def mostrarRTTRelativos(host, ruta):
 			nroHop += 1
 			file.write(line)
 
+
+def guardarZRTT(host, ruta):
+	nombreArchivo = "zrtt_" + str(host) + ".txt"
+	nroHop = 1
+
+	with io.FileIO(nombreArchivo, "w") as file:
+		for hop in ruta:
+			line = str(nroHop) + " " + str(hop.zrtt) + "\n"
+			nroHop += 1
+			file.write(line)
 
 
 def modifiedThompsonTau(n):
@@ -180,15 +177,23 @@ def esUnOutlier(deltaHopActual, tau, std):
 		return False
 
 
-
 def hallarHopOutlier(ruta, delta):
 	for hop in ruta:
 		if hop.deltaRTT == delta:
 			return hop
 
 
+def actualizarHop(hopNuevo, ruta):
+	for hopOriginal in ruta:
+		if hopOriginal.ip == hopNuevo.ip:
+			hopOriginal.zrtt = hopNuevo.zrtt
+			hopOriginal.esUnOutlier = hopNuevo.esUnOutlier
+
+
+
 def calcularOutliers(ruta):
 	outliers = []
+	rutaOriginal = list(ruta)
 
 	while len(ruta) > 2:
 		deltaRTTList = [hop.deltaRTT for hop in ruta]
@@ -205,11 +210,14 @@ def calcularOutliers(ruta):
 
 			if esUnOutlier(deltaHopActual, tau, std):
 				hopOutlier = hallarHopOutlier(ruta, delta)
-				ruta = [otrosHops for otrosHops in ruta if otrosHops != hopOutlier]
+				hopOutlier.zrtt = deltaHopActual/std
+				hopOutlier.esUnOutlier = True
+				ruta = [otrosHops for otrosHops in ruta if otrosHops.ip != hopOutlier.ip]
 				outliers.append(hopOutlier)
 				hayOutliers = True
 
-				print "Hop " + str(hopOutlier.ip) + " es un outlier"
+				print "Hop " + str(hopOutlier.ip) + " es un outlier con zrtt: " + str(hopOutlier.zrtt)
+
 				break
 
 			hayOutliers = False		
@@ -222,9 +230,27 @@ def calcularOutliers(ruta):
 				print "no hay MAS outliers"
 
 			break
-		
-			
-	return outliers
+	#end while
+	
+	rutaSinOutliers = ruta
+	calcularZRTTParaCadaHop(rutaSinOutliers) #calculo todos los zrtt que me faltan. 
+
+	#Actualizo todo en la ruta original. Es un asco pero no lo voy a hacer en O(n).
+	for hop in rutaSinOutliers:
+		actualizarHop(hop, rutaOriginal)
+
+	for hop in outliers:
+		actualizarHop(hop, rutaOriginal)
+
+
+	for hop in rutaSinOutliers:
+		print str(hop.ip) + " " + str(hop.deltaRTT) + " " + str(hop.zrtt)
+
+	for hop in outliers:
+	 	print str(hop.ip) + " " + str(hop.deltaRTT) + " " + str(hop.zrtt)
+
+
+	return rutaOriginal
 
 
 
@@ -274,13 +300,14 @@ if __name__ == '__main__':
 
 	host = sys.argv[1]
 	ruta = calcularRuta(host) #ruta es la lista de hops
-	calcularZRTTParaCadaHop(ruta) 
 
 	outputFileForMap(ruta)
 	outputFileTable(ruta)
 	
-	outliers = calcularOutliers(ruta)
+	ruta = calcularOutliers(ruta)
 	print "Cantidad de hops en la ruta: " + str(len(ruta))
 
-	if len(sys.argv) > 1 and sys.argv[2] == "1":
-			mostrarRTTRelativos(host, ruta)
+	if len(sys.argv) > 1:
+		if sys.argv[2] == "1":
+			guardarRTTRelativos(host, ruta)
+			guardarZRTT(host, ruta)
