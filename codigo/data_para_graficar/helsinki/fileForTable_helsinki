@@ -1,0 +1,33 @@
+\begin{tabular}{| l | c | c | c | c |}
+\hline
+Hop & IP &  RTT promedio (s)  & deltaRTT promedio & Ubicacion\\ 
+\hline
+1 & 192.168.11.1 & 0.00855394067435 & 0.00855394067435 & Argentina, Buenos Aires\\
+\hline
+2 & 10.21.128.1 & 0.0251533985138 & 0.0165994578394 & Argentina, Buenos Aires\\
+\hline
+3 & 10.242.0.201 & 0.0335501884592 & 0.00839678994541 & Argentina, Buenos Aires\\
+\hline
+4 & 195.22.220.33 & 0.111475969183 & 0.0779257807238 & Italy\\
+\hline
+5 & 195.22.220.32 & 0.0291205603501 & 0 & Italy\\
+\hline
+6 & 195.22.209.63 & 0.420580705007 & 0.391460144657 & Italy\\
+\hline
+7 & 109.105.97.126 & 0.350225415723 & 0 & Sweden\\
+\hline
+8 & 109.105.102.102 & 0.439397325516 & 0.0891719097927 & Sweden\\
+\hline
+9 & 109.105.102.103 & 0.375486603805 & 0 & Sweden\\
+\hline
+10 & 193.167.253.9 & 0.341898778389 & 0 & Finland\\
+\hline
+11 & 128.214.173.242 & 0.364326817649 & 0.0224280392595 & Finland, Helsinki\\
+\hline
+12 & 128.214.173.10 & 0.379979684435 & 0.0156528667863 & Finland, Helsinki\\
+\hline
+13 & 128.214.189.85 & 0.350840091705 & 0 & Finland, Helsinki\\
+\hline
+14 & 128.214.189.90 & 0.298919916153 & 0 & Finland, Helsinki\\
+\hline
+\end{tabular}
