@@ -1,2 +1,23 @@
+\subsection{Universidad de San Petersburgo}
 
+Resultados obtenidos en el monitoreo:\\
 
+\smallskip
+\input{imagenes/rusia/table}
+\bigskip
+
+\textbf{Paquetes enviados: 145 / Paquetes no respondidos: 14}\\
+
+\textbf{Dos outliers, hops: 10 y 11}\\
+
+Algo extraño es que según la herramienta de geolocalización los saltos 7 a 9 están ubicados en España, no creemos que esto sea así ya que sus RTT promedio son muy parecidos a los de Argentina. Esto lo reflejamos en el gráfico del planisferio.\\
+
+En el hop 10 aumenta el RTT promedio (y es un outlier) ya que es entonces en donde suponemos viaja hasta Estados Unidos. El hop 11 no varía demasiado respecto al 10 y a pesar de ser un outlier no es un salto importante, no se viaja intercontinentalmente, como en el próximo (el hop 12) en el cual se llega hasta Irlanda.\\
+
+Después de ese salto los RTT se mantienen entre si, ninguno se destaca, hasta llegar a destino. Con esto vemos que el método Cimbala en este caso falla al detectar el salto intercontinental.\\
+
+A continuación mostramos un gráfico con los RTT entre saltos y otro con los ZRTT\footnote{ZRTT = $(X_i - \bar{X}) / S$}  entre saltos. También así el planisferio con los saltos graficados.
+
+\begin{center}
+\includegraphics[scale=0.8]{imagenes/rusia/rusia.pdf} 
+\end{center}
