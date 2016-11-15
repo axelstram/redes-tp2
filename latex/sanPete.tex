@@ -10,7 +10,14 @@ Resultados obtenidos en el monitoreo:\\
 
 \textbf{Dos outliers, hops: 10 y 11}\\
 
-Algo extraño es que según la herramienta de geolocalización los saltos 7 a 9 están ubicados en España, no creemos que esto sea así ya que sus RTT promedio son muy parecidos a los de Argentina. Esto lo reflejamos en el gráfico del planisferio.\\
+Algo extraño es que según la herramienta de geolocalización los saltos 7 a 9 están ubicados en España, pero sus RTT promedio no varían demasiado de las de Argentina. Para explicar este fenómeno se nos ocurrieron las siguientes hipótesis:
+\begin{itemize}
+\item La herramienta de geolocalización falló y en realidad los host se encuentran en Argentina.
+\item Según investigamos hay un enlace intercontinental con fibra óptica que va desde Las Toninas hasta Portugal, quizás esta opción es mejor para luego pasar a EEUU.
+\item Las IPs están registradas en España (corresponden a Telefónica España) pero tienen servidores en Argentina o algún país limítrofe.
+\end{itemize}
+
+A falta de más datos preferimos estatar todas las hipótesis ya que no pudimos terminar de decidirnos por ninguna.\\
 
 En el hop 10 aumenta el RTT promedio (y es un outlier) ya que es entonces en donde suponemos viaja hasta Estados Unidos. El hop 11 no varía demasiado respecto al 10 y a pesar de ser un outlier no es un salto importante, no se viaja intercontinentalmente, como en el próximo (el hop 12) en el cual se llega hasta Irlanda.\\
 
