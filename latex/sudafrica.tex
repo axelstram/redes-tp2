@@ -10,7 +10,12 @@ Resultados obtenidos en el monitoreo:\\
 
 \textbf{Seis outliers, hops: 6, 7, 11, 13, 17 y 19}\\
 
-[INSERTE ANÁLISIS AQUÍ]
+Los primeros saltos que realiza son similares (sino idénticos) a los que se obtuvieron en la prueba realizada hacia 
+Pekín, no parece coincidir la información de geolocalización con los datos obtenidos, los RTTs hasta el hop 5 difieren en
+muy poco tiempo, lo que nos hace pensar que salto de Argentina hacia Italia no es correcto.
+Sí parece producirse un salto en el hop 6, detectado como outlier. Sucede lo mismo con el salto 17 de EEUU a Sudáfrica.
+
+En total se detectaron 6 outliers y 2 posibles saltos intercontinentales.
 
 A continuación mostramos un gráfico con los RTT entre saltos y otro con los ZRTT\footnote{ZRTT = $(X_i - \bar{X}) / S$}  entre saltos. También así el planisferio con los saltos graficados.
 
