@@ -74,7 +74,7 @@ def calcularRuta(host):
 		hop = Hop()
 		huboRespuesta = False
 
-		for rafaga in range(1, 10):
+		for rafaga in range(1, 3):
 			packet = IP(dst=host, ttl=ttl) / ICMP()
 			ans, unans = sr(packet, timeout=2)
 			paquetesEnviados += 1
@@ -205,8 +205,6 @@ def calcularOutliers(ruta):
 		for delta in deltaRTTList:
 			deltaHopActual = abs(delta - deltaRTTProm)
 
-			#print "deltaHopActual: " + str(deltaHopActual) + " tau: " + str(tau) + " std: " + str(std)
-
 			if esUnOutlier(deltaHopActual, tau, std):
 				hopOutlier = hallarHopOutlier(ruta, delta)
 				hopOutlier.zrtt = deltaHopActual/std
@@ -240,14 +238,6 @@ def calcularOutliers(ruta):
 
 	for hop in outliers:
 		actualizarHop(hop, rutaOriginal)
-
-
-	for hop in rutaSinOutliers:
-		print str(hop.ip) + " " + str(hop.deltaRTT) + " " + str(hop.zrtt)
-
-	for hop in outliers:
-	 	print str(hop.ip) + " " + str(hop.deltaRTT) + " " + str(hop.zrtt)
-
 
 	return rutaOriginal
 
@@ -304,7 +294,8 @@ if __name__ == '__main__':
 	outputFileTable(ruta)
 	
 	ruta = calcularOutliers(ruta)
-	print "Cantidad de hops en la ruta: " + str(len(ruta))
+
+ 	print "Cantidad de hops en la ruta: " + str(len(ruta))
 
 	if len(sys.argv) > 1:
 		if sys.argv[2] == "1":

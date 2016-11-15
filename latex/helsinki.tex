@@ -10,7 +10,9 @@ Resultados obtenidos en el monitoreo:\\
 
 \textbf{Tres outliers, hops: 4, 6 y 8}\\
 
-[INSERTE ANÁLISIS AQUÍ]
+En el mapa se puede observar que hay un enlace intercontinental entre Argentina e Italia, el cuál es detectado correctamente por el método Cimbala (hop 4). Sin embargo, vuelve a detectar un outlier en el hop 6, el cual sigue estando en Italia. Creemos que este hop fue detectado como un outlier debido a la gran diferencia entre el RTT de ese hop y el del hop anterior, como se puede observar en el gráfico de RTTs relativos. También detecta un enlace submarino desde Italia hasta Suecia (hop 8).
+En este caso consideramos que el método Cimbala para detectar outliers funcionó correctamente, ya que los outliers detectados son de interés.
+
 
 A continuación mostramos un gráfico con los RTT entre saltos y otro con los ZRTT\footnote{ZRTT = $(X_i - \bar{X}) / S$}  entre saltos. También así el planisferio con los saltos graficados.
 
